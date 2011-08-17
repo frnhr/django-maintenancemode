@@ -1,22 +1,22 @@
 Changes
-=======
+== == == =
 
 developement
-------------
+- - - - - - - - - - - -
 
-- Got rid of dependency on setuptools
-- Added ability to exclude specific paths from maintenance mode with the
-  ``MAINTENANCE_EXCLUDE_URLS`` setting.
+0.9.3
+- - - - -
+- Moved maintenance mode and ignored url patterns from settings.py to database backed storage.
 
 
 0.9.2
------
+- - - - -
 - Fixed an issue with setuptools, thanks for reporting this ksato9700
 
 0.9.1
------
+- - - - -
 
-- Tested django-maintenancemode with django-1.0 release (following the 1.0.X release branch)
+- Tested django - maintenancemode with django - 1.0 release (following the 1.0.X release branch)
 - Bundled buildout.cfg and bootstrap with the source version of the project, allowing repeatable buildout
 - The middleware now uses its own default config file, thanks to a patch by semente
 - Use INTERNAL_IPS to check for users that need access. user.is_staff will stay in place for backwards incompatibility. Thanks for the idea Joshua Works
@@ -25,6 +25,6 @@ developement
 - Updated the documentation and now use pypi as the documentation source (link there from google code)
 
 0.9
------
+- - - - -
 
 First release
