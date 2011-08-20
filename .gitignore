@@ -19,3 +19,5 @@ downloads/*
 bin/*
 develop-eggs/*.egg-link
 testproject/testproject.db
+.settings
+.settings/*

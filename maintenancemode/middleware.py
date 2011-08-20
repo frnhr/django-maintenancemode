@@ -5,7 +5,6 @@ from django.contrib.sites.models import Site
 from django.core import urlresolvers
 from django.conf.urls import defaults
 
-from maintenancemode.cache import cache, get_cache_key
 from maintenancemode.models import Maintenance, IgnoredURL
 
 defaults.handler503 = 'maintenancemode.views.defaults.temporary_unavailable'
@@ -37,7 +36,7 @@ class MaintenanceModeMiddleware(object):
         if request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS:
             return None
 
-        # Allow acess if the user doing the request is logged in and a
+        # Allow access if the user doing the request is logged in and a
         # staff member.
         if hasattr(request, 'user') and request.user.is_staff:
             return None

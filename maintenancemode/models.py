@@ -19,11 +19,7 @@ class Maintenance(models.Model):
 class IgnoredURL(models.Model):
     maintenance = models.ForeignKey(Maintenance)
     pattern = models.CharField(max_length=255)
-    display_name = models.CharField(max_length=75, help_text='Human readable name for this URL pattern.')
+    description = models.CharField(max_length=75, help_text='What this URL pattern covers.')
 
     def __unicode__(self):
         return self.pattern
-
-pre_save.connect(remove_ignore_urls_from_cache, sender=IgnoredURL)
-post_save.connect(add_ignore_urls_to_cache, sender=IgnoredURL)
-pre_delete.connect(remove_ignore_urls_from_cache, sender=IgnoredURL)

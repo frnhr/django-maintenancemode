@@ -7,7 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding model 'Maintenance'
         db.create_table('maintenancemode_maintenance', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -21,13 +21,13 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('maintenance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenancemode.Maintenance'])),
             ('pattern', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('display_name', self.gf('django.db.models.fields.CharField')(max_length=75)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=75)),
         ))
         db.send_create_signal('maintenancemode', ['IgnoredURL'])
 
 
     def backwards(self, orm):
-        
+
         # Deleting model 'Maintenance'
         db.delete_table('maintenancemode_maintenance')
 
@@ -38,7 +38,7 @@ class Migration(SchemaMigration):
     models = {
         'maintenancemode.ignoredurl': {
             'Meta': {'object_name': 'IgnoredURL'},
-            'display_name': ('django.db.models.fields.CharField', [], {'max_length': '75'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '75'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'maintenance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenancemode.Maintenance']"}),
             'pattern': ('django.db.models.fields.CharField', [], {'max_length': '255'})
