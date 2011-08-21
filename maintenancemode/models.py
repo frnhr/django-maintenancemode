@@ -3,8 +3,6 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.template.defaultfilters import join
 
-from maintenancemode.cache import add_ignore_urls_to_cache, remove_ignore_urls_from_cache
-
 
 class Maintenance(models.Model):
     site = models.ForeignKey(Site)
