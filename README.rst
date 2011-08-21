@@ -12,6 +12,12 @@ Django's INTERNAL_IPS.
 This fork moves the maintenance mode property and ignored urls out of settings.py
 and into your database.
 
+Requirements
+============
+django.contrib.sites
+
+Sites must have at least one domain to work properly.
+
 
 Installation
 ============
