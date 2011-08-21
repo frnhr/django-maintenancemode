@@ -9,6 +9,15 @@ Logged in users having staff credentials can still fully use
 the site as can users visiting the site from an ip address defined in
 Django's INTERNAL_IPS.
 
+This fork moves the maintenance mode property and ignored urls out of settings.py
+and into your database.
+
+Requirements
+============
+django.contrib.sites
+
+Sites must have at least one domain to work properly.
+
 
 Installation
 ============
@@ -31,35 +40,24 @@ Installation
 * django-maintenancemode works the same way as handling 404 or 500 error in
   Django work. It adds a handler503 which you can override in your main urls.py
   or you can add a 503.html to your templates directory.
-* In your Django settings file add a variable called MAINTENANCE_MODE. Setting
-  this variable to True activates the middleware.
+* Adding the middleware and running your site creates the necessary records in the database
+  to endable/disbale maintenance mode and ignored URL patterns.
 
 
 Configuration
 =============
-If you do not configure the settings below in your own project settings.py,
-they assume default values:
 
-``MAINTENANCE_MODE``
---------------------
+``MAINTENANCE MODE``
+------------------
+Maintenance mode will create a database record per site, read from the domains you have in the
+Sites app. There is a boolean property on each Maintenance model, "is_being_performed" that takes
+the place of putting the site into "maintnenace mode" from settings.py
 
-:Default: ``False``
-
-Boolean. Enable/disable maintenance mode.
-
-``MAINTENANCE_IGNORE_URLS``
+``MAINTENANCE IGNORE URLS``
 ---------------------------
+Patterns to ignore are registered as an inline model for each maintenance record created when the
+site is first run. Patterns should begin with a forward slash: /, but can end any way you'd like.
 
-:Default: ``()``
-
-Sequence of URL path regexes to exclude from the maintenance mode.
-
-Example::
-
-    MAINTENANCE_IGNORE_URLS = (
-        r'^/docs/.*',
-        r'^/contact'
-    )
 
 Some observations:
 
