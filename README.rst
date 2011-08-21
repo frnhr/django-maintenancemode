@@ -44,7 +44,7 @@ Configuration
 ``MAINTENANCE MODE``
 ------------------
 Maintenance mode will create a database record per site, read from the domains you have in the
-Sites app. There is a boolean property on each Maintenance model, is_being_performed that takes
+Sites app. There is a boolean property on each Maintenance model, "is_being_performed" that takes
 the place of putting the site into "maintnenace mode" from settings.py
 
 ``MAINTENANCE IGNORE URLS``
