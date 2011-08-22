@@ -36,6 +36,8 @@ Installation
    
        'maintenancemode.middleware.MaintenanceModeMiddleware',
    )
+   
+* Run manage.py syncdb to create the necessary tables.
 
 * django-maintenancemode works the same way as handling 404 or 500 error in
   Django work. It adds a handler503 which you can override in your main urls.py
