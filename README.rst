@@ -22,8 +22,7 @@ Sites must have at least one domain to work properly.
 Installation
 ============
 
-* Download django-maintenancemode from http://pypi.python.org/pypi/django-maintenancemode
-  or http://code.google.com/p/django-maintenancemode/
+* Download django-maintenancemode from `https://github.com/btaylordesign/django-maintenancemode`
 * Install using: `python setup.py install`
 * In your Django settings file add maintenancemode to your MIDDLEWARE_CLASSES.
   Make sure it comes after Django's AuthenticationMiddleware. Like so::
