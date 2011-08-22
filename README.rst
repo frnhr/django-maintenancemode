@@ -12,6 +12,10 @@ Django's INTERNAL_IPS.
 This fork moves the maintenance mode property and ignored urls out of settings.py
 and into your database.
 
+django-maintenancemode works the same way as handling 404 or 500 errors in
+Django work. It adds a handler503 which you can override in your main urls.py
+or you can add a 503.html to your templates directory.
+
 Requirements
 ============
 django.contrib.sites
@@ -38,9 +42,6 @@ Installation
    
 * Run manage.py syncdb to create the necessary tables.
 
-* django-maintenancemode works the same way as handling 404 or 500 error in
-  Django work. It adds a handler503 which you can override in your main urls.py
-  or you can add a 503.html to your templates directory.
 * Adding the middleware and running your site creates the necessary records in the database
   to endable/disbale maintenance mode and ignored URL patterns.
 
