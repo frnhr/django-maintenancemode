@@ -3,18 +3,17 @@ import re
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core import urlresolvers
-from django.conf.urls import defaults
+from django.db.utils import DatabaseError
+import django.conf.urls as urls
 
 from maintenancemode.models import Maintenance, IgnoredURL
 
-defaults.handler503 = 'maintenancemode.views.defaults.temporary_unavailable'
-defaults.__all__.append('handler503')
+urls.handler503 = 'maintenancemode.views.defaults.temporary_unavailable'
+urls.__all__.append('handler503')
 
 
 class MaintenanceModeMiddleware(object):
     def process_request(self, request):
-        site = Site.objects.get_current()
-
         """
         Get the maintenance mode from the database.
         If a Maintenance value doesn't already exist in the database, we'll create one.
@@ -22,9 +21,11 @@ class MaintenanceModeMiddleware(object):
         to prevent the user from adding or deleting a record, as we only need one
         to affect multiple sites managed from one instance of Django admin.
         """
+        site = Site.objects.get_current()
+
         try:
             maintenance = Maintenance.objects.get(site=site)
-        except Maintenance.DoesNotExist:
+        except (Maintenance.DoesNotExist, DatabaseError):
             for site in Site.objects.all():
                 maintenance = Maintenance.objects.create(site=site, is_being_performed=False)
 
