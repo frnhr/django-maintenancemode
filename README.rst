@@ -40,6 +40,8 @@ Installation
        'maintenancemode.middleware.MaintenanceModeMiddleware',
    )
    
+* Add ``maintenancemode`` to your INSTALLED_APPS.
+   
 * Run manage.py syncdb to create the necessary tables.
 
 * Adding the middleware and running your site creates the necessary records in the database
