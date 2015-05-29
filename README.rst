@@ -7,7 +7,7 @@ your site for maintenance work.
 
 Logged in users having staff credentials can still fully use
 the site as can users visiting the site from an ip address defined in
-Django's INTERNAL_IPS.
+Django's `INTERNAL_IPS`.
 
 This fork moves the maintenance mode property and ignored urls out of settings.py
 and into your database.
@@ -28,7 +28,7 @@ Installation
 
 * Download django-maintenancemode from https://github.com/btaylordesign/django-maintenancemode
 * Install using: `python setup.py install`
-* In your Django settings file add maintenancemode to your MIDDLEWARE_CLASSES.
+* In your Django settings file add maintenancemode to your `MIDDLEWARE_CLASSES`.
   Make sure it comes after Django's AuthenticationMiddleware. Like so::
 
    MIDDLEWARE_CLASSES = (
@@ -40,7 +40,7 @@ Installation
        'maintenancemode.middleware.MaintenanceModeMiddleware',
    )
    
-* Add ``maintenancemode`` to your INSTALLED_APPS.
+* Add ``maintenancemode`` to your `INSTALLED_APPS`.
    
 * Run manage.py syncdb to create the necessary tables.
 
