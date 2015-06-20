@@ -1,5 +1,5 @@
 """
-WSGI config for tmptestdj2 project.
+WSGI config for testproject project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
