@@ -1,7 +1,7 @@
 import os
 from distutils.core import setup
 
-version = '0.9.3a1'
+version = '0.9.4'
 
 def read_file(name):
     return open(os.path.join(os.path.dirname(__file__), 
@@ -17,14 +17,13 @@ setup(
     long_description='\n\n'.join([readme, changes]),
     author='Remco Wendt',
     author_email='remco@maykinmedia.nl',
-    license = "BSD",
-    platforms = ["any"],
+    license="BSD",
+    platforms=["any"],
     url='http://code.google.com/p/django-maintenancemode/',
     packages=[
         'maintenancemode',
-        'maintenancemode.conf',
-        'maintenancemode.conf.urls',
-        'maintenancemode.views'
+        'maintenancemode.views',
+        'maintenancemode.migrations',
     ],
     classifiers=[
             'Development Status :: 4 - Beta',

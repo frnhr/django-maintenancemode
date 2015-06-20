@@ -4,6 +4,12 @@ Changes
 developement
 - - - - - - - - - - - -
 
+0.9.4
+- - - - -
+- Tests for changes from 0.9.3
+- Django 1.7 and 1.8 compatibility
+- Pluggable permissions schema
+
 0.9.3
 - - - - -
 - Moved maintenance mode and ignored url patterns from settings.py to database backed storage.

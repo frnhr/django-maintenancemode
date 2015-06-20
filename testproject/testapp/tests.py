@@ -23,26 +23,26 @@ class TestDataMixin(object):
 
         cls.site = Site.objects.get_current()
 
-        if _django_18:
-            cls.TEMPLATES_WITH = {
-                'TEMPLATES': [spec.copy() for spec in settings.TEMPLATES]
-            }
-            cls.TEMPLATES_WITH['TEMPLATES'][0]['DIRS'] = (
+        # if _django_18:
+        #     cls.TEMPLATES_WITH = {
+        #         'TEMPLATES': [spec.copy() for spec in settings.TEMPLATES]
+        #     }
+        #     cls.TEMPLATES_WITH['TEMPLATES'][0]['DIRS'] = (
+        #         os.path.join(settings.BASE_DIR, 'templates/'),
+        #     )
+        #     cls.TEMPLATES_WITHOUT = {
+        #         'TEMPLATES': [spec.copy() for spec in settings.TEMPLATES]
+        #     }
+        #     cls.TEMPLATES_WITHOUT['TEMPLATES'][0]['DIRS'] = ()
+        # else:
+        cls.TEMPLATES_WITH = {
+            'TEMPLATE_DIRS': (
                 os.path.join(settings.BASE_DIR, 'templates/'),
-            )
-            cls.TEMPLATES_WITHOUT = {
-                'TEMPLATES': [spec.copy() for spec in settings.TEMPLATES]
-            }
-            cls.TEMPLATES_WITHOUT['TEMPLATES'][0]['DIRS'] = ()
-        else:
-            cls.TEMPLATES_WITH = {
-                'TEMPLATE_DIRS': (
-                    os.path.join(settings.BASE_DIR, 'templates/'),
-                ),
-            }
-            cls.TEMPLATES_WITHOUT = {
-                'TEMPLATE_DIRS': (),
-            }
+            ),
+        }
+        cls.TEMPLATES_WITHOUT = {
+            'TEMPLATE_DIRS': (),
+        }
 
         cls.user = User.objects.get_or_create(
             username='user',
