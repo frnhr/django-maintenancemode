@@ -55,7 +55,10 @@ class MaintenanceModeMiddleware(object):
         # Otherwise show the user the 503 page
         resolver = urlresolvers.get_resolver(None)
 
-        callback, param_dict = resolver.resolve_error_handler('503')
+        if hasattr(resolver, 'resolve_error_handler'):
+            callback, param_dict = resolver.resolve_error_handler('503')
+        else:  # Django<1.8
+            callback, param_dict = resolver._resolve_special('503')
         return callback(request, **param_dict)
 
     def _permission_processors(self):
