@@ -19,6 +19,10 @@ class TestDataMixin(object):
     def setUpTestData(cls):
         from django.contrib.auth.models import User
 
+        settings.INTERNAL_IPS = ()  # TODO cleanup, this is not nice
+
+        cls.site = Site.objects.get_current()
+
         if _django_18:
             cls.TEMPLATES_WITH = {
                 'TEMPLATES': [spec.copy() for spec in settings.TEMPLATES]
@@ -76,35 +80,42 @@ class TestDataMixin(object):
         if not _django_18:
             cls.setUpTestData()
 
+    def setUp(self):
+        self.maintenance = Maintenance.objects.get_or_create(
+            site=self.site,
+        )[0]  # (obj, created)[0]
+
     def _set_model_to(self, is_being_performed):
         """ Set setting model value """
         Maintenance.objects.filter(id=self.maintenance.id).update(
             is_being_performed=is_being_performed,
         )
 
+    def assertMaintenanceMode(self, response):
+        self.assertContains(response, text='Temporary unavailable', count=1, status_code=503)
+
+    def assertNormalMode(self, response):
+        self.assertContains(response, text='Rendered response page', count=1, status_code=200)
+
 
 class MaintenanceModeMiddlewareTestCase(TestDataMixin, TestCase):
 
     def setUp(self):
         """ Reset config options adapted in the individual tests """
-        settings.INTERNAL_IPS = ()
-        self.site = Site.objects.get_current()
-        self.maintenance = Maintenance.objects.get_or_create(
-            site=self.site,
-        )[0]  # (obj, created)[0]
+        super(MaintenanceModeMiddlewareTestCase, self).setUp()
         self._set_model_to(False)
 
     def test_implicitly_disabled_middleware(self):
         """ Middleware should default to being disabled """
         self.maintenance.delete()
         response = self.client.get('/')
-        self.assertContains(response, text='Rendered response page', count=1, status_code=200)
+        self.assertNormalMode(response)
 
     def test_disabled_middleware(self):
         """ Explicitly disabling the MAINTENANCE_MODE should work """
         self.assertFalse(self.maintenance.is_being_performed)
         response = self.client.get('/')
-        self.assertContains(response, text='Rendered response page', count=1, status_code=200)
+        self.assertNormalMode(response)
 
     def test_enabled_middleware_without_template(self):
         """ Enabling the middleware without a proper 503 template should raise a template error """
@@ -119,7 +130,7 @@ class MaintenanceModeMiddlewareTestCase(TestDataMixin, TestCase):
         self._set_model_to(True)
         with self.settings(**self.TEMPLATES_WITH):
             response = self.client.get('/')
-        self.assertContains(response, text='Temporary unavailable', count=1, status_code=503)
+        self.assertMaintenanceMode(response)
 
     def test_middleware_with_non_staff_user(self):
         """ A logged in user that is not a staff user should see the 503 message """
@@ -127,7 +138,7 @@ class MaintenanceModeMiddlewareTestCase(TestDataMixin, TestCase):
         with self.settings(**self.TEMPLATES_WITH):
             self.client.login(username='user', password='maintenance_pw')
             response = self.client.get('/')
-        self.assertContains(response, text='Temporary unavailable', count=1, status_code=503)
+        self.assertMaintenanceMode(response)
 
     def test_middleware_with_staff_user(self):
         """ A logged in user that _is_ a staff user should be able to use the site normally """
@@ -139,7 +150,7 @@ class MaintenanceModeMiddlewareTestCase(TestDataMixin, TestCase):
         user.save()
         self.client.login(username='maintenance', password='maintenance_pw')
         response = self.client.get('/')
-        self.assertContains(response, text='Rendered response page', count=1, status_code=200)
+        self.assertNormalMode(response)
 
     def test_middleware_with_internal_ips(self):
         """ A user that visits the site from an IP in INTERNAL_IPS
@@ -149,7 +160,7 @@ class MaintenanceModeMiddlewareTestCase(TestDataMixin, TestCase):
         client = Client(REMOTE_ADDR='127.0.0.1')
         with self.settings(INTERNAL_IPS=('127.0.0.1', )):
             response = client.get('/')
-        self.assertContains(response, text='Rendered response page', count=1, status_code=200)
+        self.assertNormalMode(response)
 
     def test_ignored_path(self):
         """ A path is ignored when applying the maintenance mode and
@@ -157,18 +168,14 @@ class MaintenanceModeMiddlewareTestCase(TestDataMixin, TestCase):
         """
         with self.settings(IGNORE_URLS=(re.compile(r'^/ignored.*'),)):
             response = self.client.get('/ignored/')
-        self.assertContains(response, text='Rendered response page', count=1, status_code=200)
+        self.assertNormalMode(response)
 
 
 class PermissionsTestCase(TestDataMixin, TestCase):
 
     def setUp(self):
         """ Reset config options adapted in the individual tests """
-        settings.INTERNAL_IPS = ()
-        self.site = Site.objects.get_current()
-        self.maintenance = Maintenance.objects.get_or_create(
-            site=self.site,
-        )[0]  # (obj, created)[0]
+        super(PermissionsTestCase, self).setUp()
         self._set_model_to(True)
 
     def test_superuser_permission_with_staff_user(self):
@@ -183,7 +190,7 @@ class PermissionsTestCase(TestDataMixin, TestCase):
         ):
             self.client.login(username='staff_user', password='maintenance_pw')
             response = self.client.get('/')
-        self.assertContains(response, text='Temporary unavailable', count=1, status_code=503)
+        self.assertMaintenanceMode(response)
 
     def test_superuser_permission_with_super_user(self):
         """ Setting settings so that only superusers can see the site,
@@ -194,4 +201,4 @@ class PermissionsTestCase(TestDataMixin, TestCase):
         )):
             self.client.login(username='super_user', password='maintenance_pw')
             response = self.client.get('/')
-        self.assertContains(response, text='Rendered response page', count=1, status_code=200)
+        self.assertNormalMode(response)
