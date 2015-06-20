@@ -24,3 +24,4 @@ testproject/testproject.db
 .pydevproject
 .project
 maintenancemode
+db.sqlite3
