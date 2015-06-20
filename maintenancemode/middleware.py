@@ -8,7 +8,6 @@ from django.contrib.sites.models import Site
 import django.conf.urls as urls
 
 from maintenancemode.models import Maintenance, IgnoredURL
-from maintenancemode.conf.app_settings import settings
 
 urls.handler503 = 'maintenancemode.views.defaults.temporary_unavailable'
 urls.__all__.append('handler503')
@@ -41,7 +40,7 @@ class MaintenanceModeMiddleware(object):
             return None
 
         # Cycle trough PERMISSION_PROCESSORS to see if this user has the right to access the site
-        for processor in _permission_processors():
+        for processor in self._permission_processors():
             if processor(request):
                 return None
 
@@ -58,8 +57,7 @@ class MaintenanceModeMiddleware(object):
         callback, param_dict = resolver.resolve_error_handler('503')
         return callback(request, **param_dict)
 
-
-def _permission_processors():
-    processor_modules = settings.MAINTENANCE_MODE_PERMISSION_PROCESSORS
-    for processor_module in processor_modules:
-        yield import_string(processor_module)
+    def _permission_processors(self):
+        processor_modules = getattr(django_settings, 'MAINTENANCE_MODE_PERMISSION_PROCESSORS', ())
+        for processor_module in processor_modules:
+            yield import_string(processor_module)
