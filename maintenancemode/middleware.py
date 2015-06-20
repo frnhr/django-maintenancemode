@@ -1,12 +1,14 @@
 import re
 
-from django.conf import settings
-from django.contrib.sites.models import Site
-from django.core import urlresolvers
+from django.conf import settings as django_settings
 from django.db.utils import DatabaseError
+from django.core import urlresolvers
+from django.utils.module_loading import import_string
+from django.contrib.sites.models import Site
 import django.conf.urls as urls
 
 from maintenancemode.models import Maintenance, IgnoredURL
+from maintenancemode.conf import settings as app_settings
 
 urls.handler503 = 'maintenancemode.views.defaults.temporary_unavailable'
 urls.__all__.append('handler503')
@@ -22,6 +24,7 @@ class MaintenanceModeMiddleware(object):
         to affect multiple sites managed from one instance of Django admin.
         """
         site = Site.objects.get_current()
+        maintenance = None
 
         try:
             maintenance = Maintenance.objects.get(site=site)
@@ -34,13 +37,13 @@ class MaintenanceModeMiddleware(object):
             return None
 
         # Allow access if remote ip is in INTERNAL_IPS
-        if request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS:
+        if request.META.get('REMOTE_ADDR') in django_settings.INTERNAL_IPS:
             return None
 
-        # Allow access if the user doing the request is logged in and a
-        # staff member.
-        if hasattr(request, 'user') and request.user.is_staff:
-            return None
+        # Cycle trough PERMISSION_PROCESSORS to see if this user has the right to access the site
+        for processor in self._permission_processors():
+            if processor(request):
+                return None
 
         # Check if a path is explicitly excluded from maintenance mode
         urls_to_ignore = IgnoredURL.objects.filter(maintenance=maintenance)
@@ -52,5 +55,12 @@ class MaintenanceModeMiddleware(object):
         # Otherwise show the user the 503 page
         resolver = urlresolvers.get_resolver(None)
 
-        callback, param_dict = resolver._resolve_special('503')
+        if hasattr(resolver, 'resolve_error_handler'):
+            callback, param_dict = resolver.resolve_error_handler('503')
+        else:  # Django<1.8
+            callback, param_dict = resolver._resolve_special('503')
         return callback(request, **param_dict)
+
+    def _permission_processors(self):
+        for processor_module in app_settings.PERMISSION_PROCESSORS:
+            yield import_string(processor_module)
