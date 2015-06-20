@@ -104,7 +104,6 @@ class MaintenanceModeMiddlewareTestCase(TestCase):
         self.assertContains(response, text='Rendered response page', count=1, status_code=200)
 
 
-
 class PermissionsTestCase(TestCase):
 
     @classmethod
