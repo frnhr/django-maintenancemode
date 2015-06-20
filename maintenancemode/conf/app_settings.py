@@ -6,6 +6,9 @@ from maintenancemode.utils.settings import AppSettings
 
 
 class MaintenanceModeSettings(AppSettings):
+    PERMISSION_PROCESSORS = (
+        'maintenancemode.permission_processors.is_staff',
+    )
     CACHE_BACKEND = None
 
     def configure_cache_backend(self, value):
@@ -21,4 +24,4 @@ class MaintenanceModeSettings(AppSettings):
                                        "Django docs: https://docs.djangoproject.com/en/dev/topics/cache/")
         return value
 
-settings = MaintenanceModeSettings("MAINTENANCE_MODE")
+settings = MaintenanceModeSettings(prefix="MAINTENANCE_MODE")
