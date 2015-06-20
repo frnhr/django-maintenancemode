@@ -1,60 +1,39 @@
-# encoding: utf-8
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-class Migration(SchemaMigration):
-
-    def forwards(self, orm):
-
-        # Adding model 'Maintenance'
-        db.create_table('maintenancemode_maintenance', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('site', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sites.Site'])),
-            ('is_being_performed', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('maintenancemode', ['Maintenance'])
-
-        # Adding model 'IgnoredURL'
-        db.create_table('maintenancemode_ignoredurl', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('maintenance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenancemode.Maintenance'])),
-            ('pattern', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=75)),
-        ))
-        db.send_create_signal('maintenancemode', ['IgnoredURL'])
+from django.db import models, migrations
 
 
-    def backwards(self, orm):
+class Migration(migrations.Migration):
 
-        # Deleting model 'Maintenance'
-        db.delete_table('maintenancemode_maintenance')
+    dependencies = [
+        ('sites', '0001_initial'),
+    ]
 
-        # Deleting model 'IgnoredURL'
-        db.delete_table('maintenancemode_ignoredurl')
-
-
-    models = {
-        'maintenancemode.ignoredurl': {
-            'Meta': {'object_name': 'IgnoredURL'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '75'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'maintenance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenancemode.Maintenance']"}),
-            'pattern': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'maintenancemode.maintenance': {
-            'Meta': {'object_name': 'Maintenance'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_being_performed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['sites.Site']"})
-        },
-        'sites.site': {
-            'Meta': {'ordering': "('domain',)", 'object_name': 'Site', 'db_table': "'django_site'"},
-            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        }
-    }
-
-    complete_apps = ['maintenancemode']
+    operations = [
+        migrations.CreateModel(
+            name='IgnoredURL',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('pattern', models.CharField(max_length=255)),
+                ('description', models.CharField(help_text=b'What this URL pattern covers.', max_length=75)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Maintenance',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('is_being_performed', models.BooleanField(default=False, verbose_name=b'In Maintenance Mode')),
+                ('site', models.ForeignKey(to='sites.Site')),
+            ],
+            options={
+                'verbose_name': 'Maintenance Mode',
+                'verbose_name_plural': 'Maintenance Mode',
+            },
+        ),
+        migrations.AddField(
+            model_name='ignoredurl',
+            name='maintenance',
+            field=models.ForeignKey(to='maintenancemode.Maintenance'),
+        ),
+    ]
