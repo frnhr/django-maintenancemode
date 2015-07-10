@@ -1,7 +1,7 @@
 import os
 from distutils.core import setup
 
-version = '0.9.4'
+version = '0.9.4.1'
 
 def read_file(name):
     return open(os.path.join(os.path.dirname(__file__), 
@@ -11,15 +11,15 @@ readme = read_file('README.rst')
 changes = read_file('CHANGES')
 
 setup(
-    name='django-maintenancemode',
+    name='tocka-django-maintenancemode',
     version=version,
     description='Django-maintenancemode allows you to temporary shutdown your site for maintenance work',
     long_description='\n\n'.join([readme, changes]),
-    author='Remco Wendt',
-    author_email='remco@maykinmedia.nl',
+    author='Fran Hrzenjak',
+    author_email='fran.hrzenjak@gmail.com',
     license="BSD",
     platforms=["any"],
-    url='http://code.google.com/p/django-maintenancemode/',
+    url='https://github.com/frnhr/django-maintenancemode/',
     packages=[
         'maintenancemode',
         'maintenancemode.views',

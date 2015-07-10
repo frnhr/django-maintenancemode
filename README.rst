@@ -40,8 +40,8 @@ Plugin is fully tested with:
 Installation
 ============
 
-* Download django-maintenancemode from https://github.com/frnhr/django-maintenancemode
-* Install using: `python setup.py install`
+* Install using `pip install tocka-django-maintenancemode`
+* Or if you no like pip: download the source and `python setup.py install`
 * In your Django settings file add maintenancemode to your `MIDDLEWARE_CLASSES`.
   Make sure it comes after Django's AuthenticationMiddleware. Like so::
 
